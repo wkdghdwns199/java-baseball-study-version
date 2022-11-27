@@ -1,0 +1,47 @@
+/* :pushpin:플러그인은 미리 구성해놓은 작업(task)을 추가하는 것이며, 빌드나 설정 정보를 포함하고 있다. */
+plugins {
+    id 'java'
+
+    // 스프링 부트를 사용하기위한 필수 플러그인
+    id 'org.springframework.boot' version '2.5.6'
+
+    // 현재 springboot 를 기준으로 의존성 추가 시 자동으로 호환되는 버전을 추가해줌.
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+/* :pushpin: 우리 프로젝트 이름. imple..ion 'org.example:1.0-SNAPSHOT' */
+/* 또는 root 프로젝트를 만들어 imple..ion 'group:name:version' 구성도 가능 */
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+/* :pushpin:추가한 라이브러리를 다운로드 받을 저장소를 적는다. */
+repositories {
+    mavenLocal()// maven 캐시 저장소
+    mavenCentral() // maven 중앙 저장소
+}
+
+/* :pushpin:의존성(라이브러리) 를 추가한다. */
+dependencies {
+    // 프로젝트 컴파일시 필요한 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 테스트시 컴파일시 필요한 라이브러리
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+
+    // 테스트 실행환경에만 필요한 라이브러리
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+/* :pushpin:이렇게 기존에 있는 task 설정을 바꾸거나, 직접 task를 추가 할 수 있다. */
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    enabled = true
+}
+
+bootJar{
+    enabled = true
+}

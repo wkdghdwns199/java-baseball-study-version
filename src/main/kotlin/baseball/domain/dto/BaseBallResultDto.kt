@@ -1,7 +1,7 @@
 package baseball.domain.dto
 
 data class BaseBallResultDto(
-    val gameId: String,
+    val gameId: Long,
     val remainingPlays: Long,
     val baseballScore: BaseBallScore,
     val isGameEnd: Boolean = false

@@ -28,6 +28,6 @@ class Response<T>(
 
 enum class ResponseStatus(val message: String) {
     SUCCESS(message = "성공"),
-    ERROR(message = "서버 에러"),
     BAD_REQUEST(message = "잘못된 요청"),
+    SERVER_ERROR(message = "서버 에러"),
 }

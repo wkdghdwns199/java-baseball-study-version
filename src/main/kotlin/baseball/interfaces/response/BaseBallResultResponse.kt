@@ -3,7 +3,7 @@ package baseball.interfaces.response
 import baseball.domain.dto.BaseBallResultDto
 
 data class BaseBallResultResponse(
-    val gameId: String,
+    val gameId: Long,
     val remainingPlays: Long,
     val score: BaseBallScoreResponse,
     val isGameEnd: Boolean = false

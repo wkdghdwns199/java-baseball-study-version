@@ -3,7 +3,7 @@ package baseball.interfaces.response
 import baseball.domain.dto.GameCreationDto
 
 data class GameCreationResponse(
-    val gameId: String?
+    val gameId: Long?
 ) {
     companion object {
         fun fromDto(gameCreationDto: GameCreationDto): GameCreationResponse =

@@ -1,31 +1,31 @@
 package baseball.exception
 
 sealed class CommonException(
-    open val code: ErrorCode,
+    open val errorCode: ErrorCode,
     override val message: String?,
 ) : RuntimeException(message)
 
 class ServiceException(
-    override val code: ErrorCode,
+    override val errorCode: ErrorCode,
     override val message: String? = null,
-) : CommonException(code, code.message.format(message ?: ""))
+) : CommonException(errorCode, errorCode.message.format(message ?: ""))
 
 class DomainServiceException(
-    override val code: ErrorCode,
+    override val errorCode: ErrorCode,
     override val message: String? = null,
-) : CommonException(code, code.message.format(message ?: ""))
+) : CommonException(errorCode, errorCode.message.format(message ?: ""))
 
 class EntityNotFoundException(
-    override val code: ErrorCode,
+    override val errorCode: ErrorCode,
     override val message: String? = null,
-) : CommonException(code, code.message.format(message ?: ""))
+) : CommonException(errorCode, errorCode.message.format(message ?: ""))
 
 class EntityCreationFailException(
-    override val code: ErrorCode,
+    override val errorCode: ErrorCode,
     override val message: String? = null,
-) : CommonException(code, code.message.format(message ?: ""))
+) : CommonException(errorCode, errorCode.message.format(message ?: ""))
 
 class EntityUpdateFailException(
-    override val code: ErrorCode,
+    override val errorCode: ErrorCode,
     override val message: String? = null,
-) : CommonException(code, code.message.format(message ?: ""))
+) : CommonException(errorCode, errorCode.message.format(message ?: ""))

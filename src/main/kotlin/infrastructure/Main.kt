@@ -1,10 +1,9 @@
-package baseball
+package infrastructure
 
-import baseball.infrastructure.ApplicationContainer
-import baseball.infrastructure.ControllerDispatcher
-import baseball.view.ConsoleView
-import baseball.view.InputScanner
-import baseball.view.ScreenPrinter
+import view.ConsoleView
+import view.ControllerDispatcher
+import view.InputScanner
+import view.ScreenPrinter
 
 fun main() {
     val applicationContainer = ApplicationContainer()

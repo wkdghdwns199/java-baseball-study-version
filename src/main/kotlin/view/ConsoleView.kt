@@ -1,6 +1,4 @@
-package baseball.view
-
-import baseball.infrastructure.ControllerDispatcher
+package view
 
 class ConsoleView(
     private val controllerDispatcher: ControllerDispatcher,

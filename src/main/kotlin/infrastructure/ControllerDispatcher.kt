@@ -1,4 +1,4 @@
-package baseball.infrastructure
+package infrastructure
 
 import baseball.interfaces.BaseballController
 import baseball.interfaces.request.BaseballPlayRequest
@@ -6,12 +6,9 @@ import baseball.interfaces.request.BaseballResultRequest
 import baseball.interfaces.request.GameStopRequest
 import baseball.interfaces.response.Response
 import baseball.interfaces.response.ResponseStatus
-import baseball.view.payload.*
+import view.ControllerDispatcher
 import com.fasterxml.jackson.databind.ObjectMapper
-
-interface ControllerDispatcher {
-    fun run(input: ViewInput): String?
-}
+import view.payload.*
 
 class BaseballControllerDispatcher(
     private val controller: BaseballController,

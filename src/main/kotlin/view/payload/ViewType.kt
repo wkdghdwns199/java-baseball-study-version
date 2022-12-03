@@ -1,4 +1,4 @@
-package baseball.view.payload
+package view.payload
 
 enum class ViewType {
     CONSOLE

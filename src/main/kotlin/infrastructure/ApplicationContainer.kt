@@ -1,4 +1,4 @@
-package baseball.infrastructure
+package infrastructure
 
 import baseball.application.BaseballApplicationService
 import baseball.domain.repository.InMemoryBaseballGameRepository
@@ -10,6 +10,7 @@ import baseball.domain.service.RandomBaseballGenerator
 import baseball.interfaces.BaseballController
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import view.ControllerDispatcher
 
 class ApplicationContainer {
     private val controllerDispatcher: ControllerDispatcher

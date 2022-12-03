@@ -1,4 +1,4 @@
-package baseball.infrastructure
+package infrastructure
 
 import baseball.exception.*
 import baseball.interfaces.response.Response

@@ -1,4 +1,4 @@
-package baseball.view.payload
+package view.payload
 
 interface ViewInput {
     val type: ViewType

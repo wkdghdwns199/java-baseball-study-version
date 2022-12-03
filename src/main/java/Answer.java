@@ -27,7 +27,6 @@ public class Answer {
         }
         return true;
     }
-
     public String toString() {
         return answer + "";
     }

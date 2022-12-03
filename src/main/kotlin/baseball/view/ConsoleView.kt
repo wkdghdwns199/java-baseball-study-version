@@ -10,4 +10,8 @@ class ConsoleView(
     fun getInput() {
         // TODO 화면 그리기 & 사용자 입력 받기
     }
+
+    fun start() {
+        // TODO main 시작
+    }
 }

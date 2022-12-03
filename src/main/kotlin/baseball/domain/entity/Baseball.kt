@@ -1,14 +1,9 @@
 package baseball.domain.entity
 
 @JvmInline
-value class Baseball private constructor(
+value class Baseball(
     val numbers: List<Long>
 ) {
-
-    fun count() = this.numbers.size.toLong()
-
-    companion object {
-        fun of(first: Long, second: Long, last: Long): Baseball =
-            Baseball(listOf(first, second, last))
-    }
+    val count: Long
+        get() = this.numbers.size.toLong()
 }

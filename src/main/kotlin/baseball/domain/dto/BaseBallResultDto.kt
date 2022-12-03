@@ -1,14 +1,31 @@
 package baseball.domain.dto
 
+import baseball.domain.entity.BaseballGamePlayHistory
+import baseball.domain.type.GameStatus
+
 data class BaseBallResultDto(
     val gameId: Long,
     val remainingPlays: Long,
     val baseballScore: BaseBallScore,
-    val isGameEnd: Boolean = false
-)
+    val gameStatus: GameStatus,
+) {
+    class BaseBallScore(
+        val ball: Long,
+        val strike: Long,
+    )
 
-class BaseBallScore(
-    val ball: Long,
-    val strike: Long
-)
-
+    companion object {
+        fun fromEntity(
+            gamePlayResult: BaseballGamePlayHistory
+        ): BaseBallResultDto =
+            BaseBallResultDto(
+                gameId = gamePlayResult.gameId,
+                remainingPlays = gamePlayResult.remainPlays,
+                baseballScore = BaseBallScore(
+                    ball = gamePlayResult.ball,
+                    strike = gamePlayResult.strike
+                ),
+                gameStatus = gamePlayResult.gameStatus
+            )
+    }
+}

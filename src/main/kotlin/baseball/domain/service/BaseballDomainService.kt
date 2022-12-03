@@ -1,19 +1,16 @@
 package baseball.domain.service
 
 import baseball.domain.dto.BaseBallResultDto
-import baseball.domain.dto.BaseBallScore
 import baseball.domain.dto.GameCreationDto
 import baseball.domain.entity.*
-import baseball.domain.repository.BaseBallGameHistoryRepository
+import baseball.domain.repository.BaseballPlayResultRepository
 import baseball.domain.repository.BaseballGameRepository
-import baseball.exception.EntityNotFoundException
-import baseball.exception.ErrorCode
-import baseball.exception.ServiceException
+import baseball.exception.*
 
 
 class BaseballDomainService(
     private val baseballGameRepository: BaseballGameRepository,
-    private val baseballGameHistoryRepository: BaseBallGameHistoryRepository,
+    private val baseballGamePlayHistoryRepository: BaseballPlayResultRepository,
     private val baseballGenerator: BaseballGenerator,
     private val baseballPolicy: BaseballPolicy,
 ) {
@@ -21,53 +18,48 @@ class BaseballDomainService(
     fun createGame(): GameCreationDto {
         val game = BaseballGame(
             answerBaseball = baseballGenerator.createBaseball(),
-            remainingPlays = baseballPolicy.getTotalPlayCount()
+            remainingPlays = baseballPolicy.totalGamePlayCount,
         )
 
-        return baseballGameRepository.save(game)
-            .let { GameCreationDto(gameId = it.gameId) }
+        return GameCreationDto(gameId = baseballGameRepository.save(game).id)
     }
 
-    fun play(gameId: Long, userBaseball: Baseball): BaseBallResultDto {
-        val game: BaseballGame = baseballGameRepository.findByGameId(gameId)
+    fun playGame(gameId: Long, userBaseball: List<Long>): BaseBallResultDto {
+        val baseballGame: BaseballGame = baseballGameRepository.findById(gameId)
             ?: throw EntityNotFoundException(ErrorCode.GAME_NOT_FOUND)
 
-        if (game.gameStatus != GameStatus.ACTIVE)
-            throw ServiceException(ErrorCode.GAME_CANNOT_PLAY)
+        if (baseballGame.isGameOver)
+            throw DomainServiceException(ErrorCode.GAME_CANNOT_PLAY)
 
-        val playResult: PlayResult = game.play(userBaseball)
+        val gamePlayHistory: BaseballGamePlayHistory = baseballGame.play(userBaseball.toBaseballOrThrow())
 
-        if (playResult.gameResult != GameResult.GAME_OVER)
-            baseballGameHistoryRepository.save(playResult)
-
-        return BaseBallResultDto(
-            gameId = game.gameId,
-            remainingPlays = playResult.remainPlays,
-            baseballScore = BaseBallScore(ball = playResult.ball, strike = playResult.strike),
-            isGameEnd = playResult.gameResult != GameResult.PLAYING_GAME
-        )
+        return baseballGamePlayHistoryRepository.save(gamePlayHistory)
+            .let(BaseBallResultDto::fromEntity)
     }
 
-    fun getPreviousResultOrNull(gameId: Long): BaseBallResultDto? {
-
-        return baseballGameHistoryRepository.findRecentResultByGameId(gameId)
-            ?.let { playResult: PlayResult ->
-                BaseBallResultDto(
-                    gameId = playResult.gameId,
-                    remainingPlays = playResult.remainPlays,
-                    baseballScore = BaseBallScore(playResult.ball, playResult.strike),
-                    isGameEnd = playResult.gameResult != GameResult.PLAYING_GAME
-                )
-            }
-    }
+    fun getPreviousPlayResultOrNull(gameId: Long): BaseBallResultDto? =
+        baseballGamePlayHistoryRepository.findRecentPlayHistoryByGameId(gameId)
+            ?.let(BaseBallResultDto::fromEntity)
 
     fun stopGame(gameId: Long) {
-        val game: BaseballGame = baseballGameRepository.findByGameId(gameId)
+        val game: BaseballGame = baseballGameRepository.findById(gameId)
             ?: throw EntityNotFoundException(ErrorCode.GAME_NOT_FOUND)
+
+        if(game.isGameOver)
+            throw DomainServiceException(ErrorCode.GAME_CANNOT_STOP)
 
         game.stop()
         baseballGameRepository.save(game)
     }
 
+    private fun List<Long>.toBaseballOrThrow(): Baseball {
+        require(this.size.toLong() == baseballPolicy.baseballNumberCount) {
+            "유효하지 않은 게임 입력값 입니다. ($this)"
+        }
+        require(this.all { it in baseballPolicy.baseballNumberRange }){
+            "유효하지 않은 입력 숫자가 포함되어 있습니다. ($this)"
+        }
+        return Baseball(this)
+    }
 
 }

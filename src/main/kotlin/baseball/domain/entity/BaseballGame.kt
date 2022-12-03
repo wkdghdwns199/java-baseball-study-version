@@ -1,58 +1,65 @@
 package baseball.domain.entity
 
+import baseball.domain.type.GameStatus
 import java.time.Instant
-import java.util.concurrent.atomic.AtomicLong
 
 data class BaseballGame(
     private val answerBaseball: Baseball,
     private var remainingPlays: Long,
+    private var gameStatus: GameStatus = GameStatus.ACTIVE,
 ) : BaseEntity() {
 
-    val gameId: Long = idGenerator.incrementAndGet()
+    val isGameOver: Boolean
+        get() = this.gameStatus != GameStatus.ACTIVE
 
-    var gameStatus: GameStatus = GameStatus.ACTIVE
-        private set
-
-
-    fun play(userBaseball: Baseball): PlayResult {
-        if (isGameOver())
-            return PlayResult(gameId, GameResult.GAME_OVER, remainPlays = 0, ball = 0, strike = 0)
-
-        val (ball, strike) = playBaseballGame(userBaseball)
-
+    fun play(userBaseball: Baseball): BaseballGamePlayHistory {
         this.modifiedAt = Instant.now()
+        this.remainingPlays -= 1
 
-        if (strike >= answerBaseball.count())
-            return PlayResult(gameId, GameResult.WIN, remainPlays = 0, ball = ball, strike = strike)
-                .also { this.remainingPlays = 0 }
+        val (ball: Long, strike: Long) = calculateBaseballResult(userBaseball)
 
-        return PlayResult(gameId, GameResult.WIN, remainPlays = remainingPlays, ball = ball, strike = strike)
-            .also { this.remainingPlays -= 1 }
+        when {
+            isRemainPlayCount() == false -> {
+                this.gameStatus = GameStatus.GAME_OVER
+            }
+
+            isStrikeOut(strike) -> {
+                this.remainingPlays = 0
+                this.gameStatus = GameStatus.GAME_WIN
+            }
+        }
+
+        return BaseballGamePlayHistory(
+            gameId = this.id,
+            gameStatus = this.gameStatus,
+            remainPlays = this.remainingPlays,
+            ball = ball,
+            strike = strike
+        )
     }
 
     fun stop() {
-        gameStatus = GameStatus.STOP
+        this.modifiedAt = Instant.now()
+        gameStatus = GameStatus.STOP_IN_PLAYING
     }
 
-    private fun playBaseballGame(userBaseball: Baseball): Pair<Long, Long> {
+    private fun isRemainPlayCount() = remainingPlays > 0L
+
+    private fun isStrikeOut(strike: Long): Boolean {
+        return strike >= answerBaseball.count
+    }
+
+    private fun calculateBaseballResult(userBaseball: Baseball): Pair<Long, Long> {
         var strike: Long = 0
         var ball: Long = 0
 
-        for ((i, number) in userBaseball.numbers.withIndex()) {
+        for ((i: Int, number: Long) in userBaseball.numbers.withIndex()) {
             when {
                 this.answerBaseball.numbers[i] == number -> strike++
                 this.answerBaseball.numbers.contains(number) -> ball++
             }
         }
-
-        return Pair(strike, ball)
+        return Pair(ball, strike)
     }
 
-    private fun isGameOver(): Boolean {
-        return (remainingPlays <= 0L)
-    }
-
-    companion object {
-        private val idGenerator = AtomicLong()
-    }
 }

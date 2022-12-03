@@ -2,11 +2,9 @@ package baseball.application
 
 import baseball.domain.dto.BaseBallResultDto
 import baseball.domain.dto.GameCreationDto
-import baseball.domain.entity.Baseball
 import baseball.domain.service.BaseballDomainService
 import baseball.exception.EntityNotFoundException
 import baseball.exception.ErrorCode
-import baseball.exception.ServiceException
 import baseball.interfaces.request.BaseballPlayRequest
 import baseball.interfaces.request.BaseballResultRequest
 import baseball.interfaces.request.GameStopRequest
@@ -27,17 +25,17 @@ class BaseballApplicationService(
         require(!request.baseballNumbers.isNullOrEmpty()) { "게임을 할 숫자를 입력해야 합니다." }
         require(request.baseballNumbers.size == 3) { "숫자는 총 3개를 정확하게 입력해야합니다." }
 
-        return baseballDomainService.play(
+        return baseballDomainService.playGame(
             gameId = request.gameId.toLong(),
-            userBaseball = request.baseballNumbers.toBaseball()
+            userBaseball = request.baseballNumbers
         )
     }
 
     fun getPreviousResult(request: BaseballResultRequest): BaseBallResultDto {
         require(request.gameId != null) { "gameId가 유효하지 않습니다." }
 
-        return baseballDomainService.getPreviousResultOrNull(request.gameId)
-            ?: throw EntityNotFoundException(ErrorCode.GAME_HISTORY_NOT_FOUND)
+        return baseballDomainService.getPreviousPlayResultOrNull(request.gameId)
+            ?: throw EntityNotFoundException(ErrorCode.GAME_PLAY_HISTORY_NOT_FOUND)
     }
 
     fun stopGame(request: GameStopRequest) {
@@ -46,10 +44,5 @@ class BaseballApplicationService(
         baseballDomainService.stopGame(request.gameId)
     }
 
-
-    private fun List<Long>?.toBaseball(): Baseball {
-        if (this?.size != 3) throw ServiceException(ErrorCode.GAME_SERVICE_ERROR, "request -> baseball 변환 실패")
-        return Baseball.of(this[0], this[1], this[2])
-    }
 }
 

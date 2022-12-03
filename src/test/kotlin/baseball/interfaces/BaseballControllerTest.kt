@@ -2,13 +2,13 @@ package baseball.interfaces
 
 import baseball.application.BaseballApplicationService
 import baseball.domain.dto.BaseBallResultDto
-import baseball.domain.dto.BaseBallScore
+import baseball.domain.dto.BaseBallResultDto.*
 import baseball.domain.dto.GameCreationDto
+import baseball.domain.type.GameStatus.*
 import baseball.interfaces.request.BaseballPlayRequest
 import baseball.interfaces.request.BaseballResultRequest
 import baseball.interfaces.request.GameStopRequest
 import baseball.interfaces.response.ResponseStatus
-import io.github.serpro69.kfaker.Faker
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
@@ -52,12 +52,12 @@ class BaseballControllerTest : FreeSpec({
     "playBaseball: 야구 게임 실행" - {
         "게임 실행에 성공하여 실행한 게임 결과를 반환한다." {
             listOf(
-                BaseBallResultDto(1, remainingPlays = 5, BaseBallScore(ball = 0, strike = 0)),
-                BaseBallResultDto(2, remainingPlays = 4, BaseBallScore(ball = 0, strike = 1)),
-                BaseBallResultDto(3, remainingPlays = 3, BaseBallScore(ball = 0, strike = 2)),
-                BaseBallResultDto(4, remainingPlays = 2, BaseBallScore(ball = 1, strike = 1)),
-                BaseBallResultDto(5, remainingPlays = 1, BaseBallScore(ball = 2, strike = 1)),
-                BaseBallResultDto(6, remainingPlays = 0, BaseBallScore(ball = 0, strike = 3)),
+                BaseBallResultDto(1, remainingPlays = 5, BaseBallScore(ball = 0, strike = 0), ACTIVE),
+                BaseBallResultDto(2, remainingPlays = 4, BaseBallScore(ball = 0, strike = 1), ACTIVE),
+                BaseBallResultDto(3, remainingPlays = 3, BaseBallScore(ball = 0, strike = 2), ACTIVE),
+                BaseBallResultDto(4, remainingPlays = 2, BaseBallScore(ball = 1, strike = 1), ACTIVE),
+                BaseBallResultDto(5, remainingPlays = 1, BaseBallScore(ball = 2, strike = 1), ACTIVE),
+                BaseBallResultDto(6, remainingPlays = 0, BaseBallScore(ball = 0, strike = 3), ACTIVE),
             ).forAll { dto: BaseBallResultDto ->
                 val request = BaseballPlayRequest(gameId = dto.gameId, emptyList())
                 every { baseballApplicationService.playBaseball(request) } returns dto
@@ -100,7 +100,7 @@ class BaseballControllerTest : FreeSpec({
 
     "getPreviousBaseballResult: 이전 결과 조회" - {
         "이전 결과 조회에 성공 한다." {
-            val dto = BaseBallResultDto(1, remainingPlays = 5, BaseBallScore(ball = 0, strike = 0))
+            val dto = BaseBallResultDto(1, remainingPlays = 5, BaseBallScore(ball = 0, strike = 0), ACTIVE)
             val request = BaseballResultRequest(gameId = dto.gameId)
             every { baseballApplicationService.getPreviousResult(request) } returns dto
 

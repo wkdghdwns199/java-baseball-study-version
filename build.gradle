@@ -10,6 +10,7 @@ plugins {
 
     id 'org.jetbrains.kotlin.jvm' version '1.7.21' // kotlin(1.7) plugins
     id 'application' // kotlin plugins
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.21'
 
     // https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures
     id 'java-test-fixtures' // test-fixtures gradle 모듈 추가 testImplementation(testFixtures(project(":domain")))
@@ -33,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation("org.jetbrains.kotlin:kotlin-reflect") // kotlin with java reflect annotation
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // kotlin with java library (* 코틀린은 자바8 호환 바이트코드 생성)
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
     // 테스트시 컴파일시 필요한 라이브러리
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

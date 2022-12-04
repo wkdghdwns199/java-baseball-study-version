@@ -1,5 +1,6 @@
 package api.view
 
 interface InputScanner {
-    // TODO
+    abstract fun getNumbers(): List<Long>
+    fun getBoolean(): Boolean
 }

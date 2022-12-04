@@ -1,5 +1,7 @@
 package api.view.payload
 
+import api.view.payload.request.ViewType
+
 interface ViewInput {
     val type: ViewType
 }
